@@ -1,4 +1,4 @@
-package com.pavelshelkovenko.shelkovenko.ui.theme
+package com.pavelshelkovenko.shelkovenko.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

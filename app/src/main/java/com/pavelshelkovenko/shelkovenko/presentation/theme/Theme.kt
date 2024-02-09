@@ -1,4 +1,4 @@
-package com.pavelshelkovenko.shelkovenko.ui.theme
+package com.pavelshelkovenko.shelkovenko.presentation.theme
 
 import android.app.Activity
 import android.os.Build
