@@ -62,9 +62,19 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
 
+    // Coil
+    implementation(libs.bundles.coil)
+
     // Room
     implementation(libs.bundles.room)
-    kapt(libs.androidx.room.compiler)
+    kapt(libs.room.compiler)
+
+    // Retrofit
+    implementation(libs.bundles.retrofit)
+
+    // Dagger
+    implementation(libs.dagger.core)
+    kapt(libs.dagger.compiler)
 
     // Test
     androidTestImplementation(platform(libs.compose.bom))
