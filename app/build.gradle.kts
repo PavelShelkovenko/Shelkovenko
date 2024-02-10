@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.android.kotlin)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.dagger.hilt)
 }
 
 android {
@@ -73,8 +74,9 @@ dependencies {
     implementation(libs.bundles.retrofit)
 
     // Dagger
-    implementation(libs.dagger.core)
+    implementation(libs.bundles.dagger)
     kapt(libs.dagger.compiler)
+    kapt(libs.hilt.compiler)
 
     // Test
     androidTestImplementation(platform(libs.compose.bom))

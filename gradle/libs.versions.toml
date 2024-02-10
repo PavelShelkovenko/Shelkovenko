@@ -14,7 +14,9 @@ room = "2.6.1"
 retrofit = "2.9.0"
 okHttp = "4.11.0"
 okHttp-logging = "4.11.0"
-dagger = "2.43.2"
+dagger = "2.48"
+dagger-compose = "1.0.0"
+hilt-compiler = "1.0.0"
 
 [libraries]
 # Core
@@ -55,14 +57,17 @@ retrofit-gson-converter = { module = "com.squareup.retrofit2:converter-gson", ve
 okHttp-core = { module = "com.squareup.okhttp3:okhttp", version.ref = "okHttp" }
 okHttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okHttp-logging" }
 
-# Dagger2
-dagger-core = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+# Dagger Hilt
+dagger-core = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
+dagger-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "dagger-compose" }
+hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hilt-compiler" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "android-gradle" }
 android-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 
 
 [bundles]
@@ -72,3 +77,4 @@ debug = ["compose-ui-tooling", "androidx-compose-ui-test-manifest"]
 coil = ["coil-compose", "coil-svg"]
 room = ["room-runtime", "room-ktx"]
 retrofit = ["retrofit-core", "retrofit-gson-converter", "okHttp-core", "okHttp-logging-interceptor"]
+dagger = ["dagger-core", "dagger-compose"]

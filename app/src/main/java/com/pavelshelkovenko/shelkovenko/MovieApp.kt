@@ -1,6 +1,7 @@
 package com.pavelshelkovenko.shelkovenko
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class MovieApp: Application() {
-}
+@HiltAndroidApp
+class MovieApp: Application()
