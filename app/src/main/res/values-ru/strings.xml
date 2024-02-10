@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Shelkovenko</string>
+    <string name="popular">Популярные</string>
+    <string name="favorite">Избранное</string>
+    <string name="not_found">Не найдено</string>
+    <string name="repeat">Повторить</string>
+</resources>

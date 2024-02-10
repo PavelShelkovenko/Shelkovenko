@@ -13,5 +13,5 @@ interface CacheDao {
     suspend fun putCache(cacheEntity: CacheEntity)
 
     @Query("SELECT * FROM cache WHERE apiRequest = :request LIMIT 1")
-    suspend fun getCache(request: String): CacheEntity
+    suspend fun getCache(request: String): CacheEntity?
 }

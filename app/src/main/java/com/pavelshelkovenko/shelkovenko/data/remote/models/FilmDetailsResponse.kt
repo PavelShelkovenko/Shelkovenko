@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class FilmDetailsResponse(
+    @SerializedName("kinopoiskId")
+    val id: Int,
     @SerializedName("nameRu")
     val title: String?,
     @SerializedName("posterUrl")

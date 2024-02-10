@@ -2,6 +2,7 @@ package com.pavelshelkovenko.shelkovenko.di
 
 import android.app.Application
 import androidx.room.Room
+import com.pavelshelkovenko.shelkovenko.data.FilmMapper
 import com.pavelshelkovenko.shelkovenko.data.local.AppDatabase
 import com.pavelshelkovenko.shelkovenko.data.remote.ApiService
 import dagger.Module
@@ -26,7 +27,7 @@ object AppModule {
             application,
             AppDatabase::class.java,
             AppDatabase.DB_NAME
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides
@@ -45,6 +46,12 @@ object AppModule {
             .client(client)
             .build()
             .create()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMapper(): FilmMapper {
+        return FilmMapper()
     }
 
 }

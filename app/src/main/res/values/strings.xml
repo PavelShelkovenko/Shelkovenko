@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Shelkovenko</string>
+    <string name="popular">Populars</string>
+    <string name="favorite">Favorites</string>
+    <string name="not_found">Not found</string>
+    <string name="repeat">Repeat</string>
 </resources>

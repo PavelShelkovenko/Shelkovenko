@@ -10,5 +10,7 @@ data class FavoriteFilmEntity(
     val id: Int,
     val title: String,
     val year: Int,
-    val genre: String
+    val posterUrl: String,
+    val genre: String,
+    val countries: String
 )

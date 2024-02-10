@@ -14,5 +14,7 @@ data class FilmDto(
     @SerializedName("year")
     val year: Int?,
     @SerializedName("genres")
-    val genres: List<GenreDto>?
+    val genres: List<GenreDto>?,
+    @SerializedName("countries")
+    val countries: List<CountryDto>?
 ): Serializable
