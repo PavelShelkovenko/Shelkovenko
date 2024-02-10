@@ -20,7 +20,7 @@ fun FilmsAppButton(
 ) {
     Button(
         onClick = { onClick() },
-        modifier = Modifier.widthIn(170.dp),
+        modifier = Modifier.widthIn(160.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (buttonStatus == ButtonStatus.Unselected) {
                 MaterialTheme.colorScheme.secondary
@@ -29,6 +29,7 @@ fun FilmsAppButton(
     ) {
         Text(
             text = title,
+            maxLines = 1,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
             color = if (buttonStatus == ButtonStatus.Unselected) {
                 MaterialTheme.colorScheme.primary

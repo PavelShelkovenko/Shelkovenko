@@ -3,9 +3,11 @@ package com.pavelshelkovenko.shelkovenko.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.pavelshelkovenko.shelkovenko.presentation.theme.ShelkovenkoTheme
 
 @Composable
@@ -20,7 +22,8 @@ fun ComboButton(
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
     ) {
         FilmsAppButton(
             title = firstButtonTitle,
@@ -44,7 +47,7 @@ fun PreviewComboButton() {
             firstButtonTitle = "nibh",
             secondButtonTitle = "senectus",
             firstButtonStatus = ButtonStatus.Unselected,
-            secondButtonStatus =ButtonStatus.Selected,
+            secondButtonStatus = ButtonStatus.Selected,
             firstButtonClick = {},
             secondButtonClick = {}
         )

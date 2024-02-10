@@ -21,7 +21,7 @@ class PopularFilmsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            delay(5000)
+            //delay(5000)
             getPopularFilmsUseCase().onSuccess { films ->
                 state.update {
                     PopularFilmsScreenState.Content(

@@ -67,7 +67,9 @@ fun PopularFilmContent(
                 }
 
                 is PopularFilmsScreenState.Error -> {
-
+                    ErrorScreen {
+                        // try to repeat downloading data
+                    }
                 }
 
             }
