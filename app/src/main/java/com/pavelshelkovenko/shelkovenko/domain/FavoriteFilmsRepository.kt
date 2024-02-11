@@ -12,4 +12,6 @@ interface FavoriteFilmsRepository {
     suspend fun deleteFavoriteFilm(filmId: Int)
 
     suspend fun addFavoriteFilm(film: Film)
+
+    suspend fun searchFavoriteFilms(query: String): List<Film>
 }

@@ -1,5 +1,7 @@
 package com.pavelshelkovenko.shelkovenko.presentation.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -29,17 +32,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.pavelshelkovenko.shelkovenko.presentation.model.FilmUi
-import com.pavelshelkovenko.shelkovenko.presentation.theme.Gray
 import com.pavelshelkovenko.shelkovenko.presentation.theme.ShelkovenkoTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FilmCard(
     filmUi: FilmUi,
     modifier: Modifier = Modifier,
-    onFilmClick: (Int) -> Unit
+    onFilmClick: (Int) -> Unit,
+    onLongClickFilm: (FilmUi) -> Unit
 ) {
     Card(
-        onClick = { onFilmClick(filmUi.id) },
         modifier = modifier
             .fillMaxWidth()
             .height(92.dp)
@@ -48,6 +51,11 @@ fun FilmCard(
                 ambientColor = Color.DarkGray,
                 spotColor = Color.DarkGray,
                 shape = RoundedCornerShape(16.dp)
+            )
+            .clip(RoundedCornerShape(16.dp))
+            .combinedClickable(
+                onClick = { onFilmClick(filmUi.id) },
+                onLongClick = { onLongClickFilm(filmUi) }
             ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 12.dp
@@ -116,8 +124,11 @@ fun FilmCardPreview() {
                 year = null,
                 posterUrl = "https://duckduckgo.com/?q=dictas",
                 genre = "nascetur",
+                countries = emptyList(),
                 isFavorite = false
-            )
-        ) {  }
+            ),
+            onLongClickFilm = {},
+            onFilmClick = {}
+        )
     }
 }

@@ -9,5 +9,6 @@ data class FilmUi(
     val year: Int?,
     val posterUrl: String,
     val genre: String,
+    val countries: List<String>,
     val isFavorite: Boolean,
 )

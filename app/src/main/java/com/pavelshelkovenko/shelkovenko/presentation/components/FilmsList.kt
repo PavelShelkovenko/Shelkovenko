@@ -12,7 +12,8 @@ import com.pavelshelkovenko.shelkovenko.presentation.model.FilmUi
 fun FilmsList(
     filmsList: List<FilmUi>,
     contentPadding: PaddingValues,
-    onFilmClick: (Int) -> Unit
+    onFilmClick: (Int) -> Unit,
+    onLongClickFilm: (FilmUi) -> Unit,
 ) {
     LazyColumn(
         contentPadding = contentPadding,
@@ -24,7 +25,8 @@ fun FilmsList(
         ) { film ->
             FilmCard(
                 filmUi = film,
-                onFilmClick = { filmId -> onFilmClick(filmId) }
+                onFilmClick = { filmId -> onFilmClick(filmId) },
+                onLongClickFilm = onLongClickFilm
             )
         }
     }

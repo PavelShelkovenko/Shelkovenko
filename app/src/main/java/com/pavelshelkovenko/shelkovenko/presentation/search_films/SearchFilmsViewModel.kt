@@ -1,26 +1,27 @@
 package com.pavelshelkovenko.shelkovenko.presentation.search_films
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pavelshelkovenko.shelkovenko.domain.FavoriteFilmsRepository
 import com.pavelshelkovenko.shelkovenko.domain.FilmsRepository
+import com.pavelshelkovenko.shelkovenko.domain.models.Film
 import com.pavelshelkovenko.shelkovenko.presentation.model.FilmUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchFilmsViewModel @Inject constructor(
-    private val filmsRepository: FilmsRepository
+    private val filmsRepository: FilmsRepository,
+    private val favoriteFilmsRepository: FavoriteFilmsRepository
 ) : ViewModel() {
 
-    var state: MutableStateFlow<SearchFilmsScreenState> = MutableStateFlow((SearchFilmsScreenState()))
+    var state: MutableStateFlow<SearchFilmsScreenState> =
+        MutableStateFlow((SearchFilmsScreenState()))
         private set
 
     var area: MutableStateFlow<SearchArea> = MutableStateFlow(SearchArea.Populars)
@@ -32,22 +33,13 @@ class SearchFilmsViewModel @Inject constructor(
         when (event) {
             is SearchFilmsScreenEvent.ChangeKeyword -> {
                 state.update { it.copy(keyword = event.newKeyword) }
-
-                if (event.newKeyword.isNotBlank()) {
-                    when (area.value) {
-                        SearchArea.Populars -> {
-                            searchPopularsFilms(event.newKeyword)
-                        }
-                        SearchArea.Favorites -> TODO()
+                when (area.value) {
+                    SearchArea.Populars -> {
+                        searchPopularsFilms(event.newKeyword)
                     }
-                } else {
-                    state.update {
-                        it.copy(
-                            isEmptySearch = true,
-                            isLoading = false,
-                            isError = false,
-                            films = emptyList()
-                        )
+
+                    SearchArea.Favorites -> {
+                        searchFavoriteFilms(event.newKeyword)
                     }
                 }
             }
@@ -62,8 +54,43 @@ class SearchFilmsViewModel @Inject constructor(
                         searchPopularsFilms(state.value.keyword)
                     }
 
-                    SearchArea.Favorites -> TODO()
+                    SearchArea.Favorites -> {
+                        searchFavoriteFilms(state.value.keyword)
+                    }
                 }
+            }
+        }
+    }
+
+    private fun searchFavoriteFilms(query: String) {
+        state.update {
+            it.copy(
+                isLoading = true,
+                isInitial = false,
+                isEmptySearch = false,
+                isError = false,
+            )
+        }
+        viewModelScope.launch {
+            val result = favoriteFilmsRepository.searchFavoriteFilms(query = query)
+            state.update {
+                it.copy(
+                    films = result.map { film ->
+                        FilmUi(
+                            id = film.id,
+                            title = film.title,
+                            year = film.year,
+                            posterUrl = film.posterUrl,
+                            genre = film.genre.firstOrNull() ?: "",
+                            isFavorite = film.isFavorite,
+                            countries = film.countries
+                        )
+                    },
+                    isLoading = false,
+                    isEmptySearch = false,
+                    isError = false,
+                    isInitial = false
+                )
             }
         }
     }
@@ -71,9 +98,8 @@ class SearchFilmsViewModel @Inject constructor(
     private fun searchPopularsFilms(newKeyword: String) {
         viewModelScope.launch {
             searchJob?.cancel()
-            delay(800)
-            searchJob = launch {
-                ensureActive()
+            searchJob = viewModelScope.launch {
+                delay(800)
                 state.update {
                     it.copy(
                         isInitial = false,
@@ -83,9 +109,9 @@ class SearchFilmsViewModel @Inject constructor(
                     )
                 }
                 val result = filmsRepository.searchFilmByKeyword(keyword = newKeyword)
-                ensureActive()
                 result.onSuccess { films ->
-                    if (films.isEmpty()) {
+                    val mappedResult = mapWithFavorite(films)
+                    if (mappedResult.isEmpty()) {
                         state.update {
                             it.copy(
                                 isLoading = false,
@@ -97,14 +123,15 @@ class SearchFilmsViewModel @Inject constructor(
                     } else {
                         state.update {
                             it.copy(
-                                films = films.map { film ->
+                                films = mappedResult.map { film ->
                                     FilmUi(
                                         id = film.id,
                                         title = film.title,
                                         year = film.year,
                                         posterUrl = film.posterUrl,
                                         genre = film.genre.firstOrNull() ?: "",
-                                        isFavorite = film.isFavorite
+                                        isFavorite = film.isFavorite,
+                                        countries = film.countries
                                     )
                                 },
                                 isLoading = false,
@@ -126,12 +153,63 @@ class SearchFilmsViewModel @Inject constructor(
         }
     }
 
-    private fun searchFavoriteFilms(newKeyword: String) {
-
+    private suspend fun mapWithFavorite(films: List<Film>): List<Film> {
+        val favoriteFilmsList = favoriteFilmsRepository.getFavoriteFilms()
+        return films.map { popularFilm ->
+            if (favoriteFilmsList.find { popularFilm.id == it.id } != null) {
+                popularFilm.copy(
+                    isFavorite = true
+                )
+            } else {
+                popularFilm
+            }
+        }
     }
 
     private fun defineSearchArea(newArea: SearchArea) {
         area.value = newArea
     }
 
+    fun toggleFavorite(film: FilmUi) {
+        viewModelScope.launch {
+            if (film.isFavorite) {
+                favoriteFilmsRepository.deleteFavoriteFilm(filmId = film.id)
+            } else {
+                favoriteFilmsRepository.addFavoriteFilm(
+                    Film(
+                        id = film.id,
+                        title = film.title,
+                        year = film.year,
+                        genre = film.genre.split(','),
+                        posterUrl = film.posterUrl,
+                        countries = film.countries,
+                        isFavorite = true
+                    )
+                )
+            }
+        }
+        state.update {
+            it.copy(
+                films = it.films.map { oldFilm ->
+                    if (oldFilm.id == film.id) {
+                        oldFilm.copy(
+                            isFavorite = !oldFilm.isFavorite
+                        )
+                    } else {
+                        oldFilm
+                    }
+                }
+            )
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+

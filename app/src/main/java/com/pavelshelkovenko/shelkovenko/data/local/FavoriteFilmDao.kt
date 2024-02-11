@@ -1,7 +1,6 @@
 package com.pavelshelkovenko.shelkovenko.data.local
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,4 +21,7 @@ interface FavoriteFilmDao {
 
     @Query("SELECT * FROM favorite_films")
     suspend fun getFavoriteFilms(): List<FavoriteFilmEntity>?
+
+    @Query("SELECT * FROM favorite_films WHERE title LIKE '%' || :query || '%'")
+    suspend fun searchFavoriteFilms(query: String): List<FavoriteFilmEntity>?
 }

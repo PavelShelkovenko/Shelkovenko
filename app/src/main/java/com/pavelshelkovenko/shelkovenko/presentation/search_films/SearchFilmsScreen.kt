@@ -1,18 +1,18 @@
 package com.pavelshelkovenko.shelkovenko.presentation.search_films
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,10 +22,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,9 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pavelshelkovenko.shelkovenko.R
 import com.pavelshelkovenko.shelkovenko.presentation.components.BackArrowButton
-import com.pavelshelkovenko.shelkovenko.presentation.components.ButtonStatus
 import com.pavelshelkovenko.shelkovenko.presentation.components.ErrorScreen
-import com.pavelshelkovenko.shelkovenko.presentation.components.FilmsAppButton
 import com.pavelshelkovenko.shelkovenko.presentation.components.FilmsList
 
 @Composable
@@ -90,6 +87,7 @@ fun SearchFilmsContent(
             localState.isInitial -> {
 
             }
+
             localState.isLoading -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -100,30 +98,44 @@ fun SearchFilmsContent(
                     )
                 }
             }
+
             localState.isEmptySearch -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    FilmsAppButton(
-                        title = stringResource(id = R.string.not_found),
-                        buttonStatus = ButtonStatus.Selected,
-                        onClick = {}
-                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(MaterialTheme.colorScheme.primary)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.not_found),
+                            style = MaterialTheme.typography.displayMedium,
+                            modifier = Modifier.padding(12.dp),
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
                 }
             }
+
             localState.isError -> {
                 ErrorScreen {
                     viewModel.onEvent(event = SearchFilmsScreenEvent.Repeat)
                 }
             }
+
             else -> {
                 FilmsList(
                     filmsList = localState.films,
-                    contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp)
-                ) { filmId ->
-                    onNavigateToFilmDetails(filmId)
-                }
+                    contentPadding = PaddingValues(top = 10.dp, bottom = 20.dp),
+                    onFilmClick = { filmId ->
+                        onNavigateToFilmDetails(filmId)
+                    },
+                    onLongClickFilm = { filmUi ->
+                        viewModel.toggleFavorite(filmUi)
+                    }
+                )
             }
         }
     }
@@ -136,7 +148,7 @@ fun SearchFilmsHeader(
     onKeywordChanged: (String) -> Unit,
     area: SearchArea
 ) {
-    Row (
+    Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
         BackArrowButton(
@@ -146,7 +158,9 @@ fun SearchFilmsHeader(
         TextField(
             value = keyword,
             onValueChange = { onKeywordChanged(it) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp)),
             placeholder = {
                 Text(
                     text = when (area) {
@@ -166,11 +180,11 @@ fun SearchFilmsHeader(
                 focusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                 unfocusedPlaceholderColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
                 unfocusedIndicatorColor = MaterialTheme.colorScheme.background,
-                focusedIndicatorColor = MaterialTheme.colorScheme.background
+                focusedIndicatorColor = MaterialTheme.colorScheme.background,
             ),
             trailingIcon = {
                 if (keyword != "") {
-                    IconButton(onClick = { onKeywordChanged("")}) {
+                    IconButton(onClick = { onKeywordChanged("") }) {
                         Icon(
                             Icons.Default.Close,
                             contentDescription = null,

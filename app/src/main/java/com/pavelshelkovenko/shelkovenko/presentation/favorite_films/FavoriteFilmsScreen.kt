@@ -21,7 +21,6 @@ import com.pavelshelkovenko.shelkovenko.presentation.components.ErrorScreen
 import com.pavelshelkovenko.shelkovenko.presentation.components.FilmsList
 import com.pavelshelkovenko.shelkovenko.presentation.components.ShimmersFilmsList
 import com.pavelshelkovenko.shelkovenko.presentation.components.TopBar
-import com.pavelshelkovenko.shelkovenko.presentation.popular_films.PopularFilmsScreenState
 import com.pavelshelkovenko.shelkovenko.presentation.search_films.SearchArea
 
 @Composable
@@ -70,10 +69,14 @@ fun FavoriteFilmsContent(
                 is FavoriteFilmsScreenState.Content -> {
                     FilmsList(
                         filmsList = localState.favoriteFilms,
-                        contentPadding = PaddingValues(top = 10.dp, bottom = 70.dp)
-                    ) { filmId ->
-                        onNavigateToFilmDetails(filmId)
-                    }
+                        contentPadding = PaddingValues(top = 10.dp, bottom = 70.dp),
+                        onFilmClick = { filmId ->
+                            onNavigateToFilmDetails(filmId)
+                        },
+                        onLongClickFilm = {
+                            viewModel.deleteFromFavorite(filmId = it.id)
+                        }
+                    )
                 }
 
                 is FavoriteFilmsScreenState.Loading -> {

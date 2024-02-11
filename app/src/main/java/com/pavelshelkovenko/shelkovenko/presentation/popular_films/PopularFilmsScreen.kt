@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,10 @@ fun PopularFilmsScreen(
 
     val viewModel = hiltViewModel<PopularFilmsViewModel>()
     val state = viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = true) {
+        viewModel.downloadFilms()
+    }
 
     PopularFilmContent(
         viewModel = viewModel,
@@ -68,10 +73,14 @@ fun PopularFilmContent(
                 is PopularFilmsScreenState.Content -> {
                     FilmsList(
                         filmsList = localState.films,
-                        contentPadding = PaddingValues(top = 10.dp, bottom = 70.dp)
-                    ) { filmId ->
-                        onNavigateToFilmDetails(filmId)
-                    }
+                        contentPadding = PaddingValues(top = 10.dp, bottom = 70.dp),
+                        onFilmClick = { filmId ->
+                            onNavigateToFilmDetails(filmId)
+                        },
+                        onLongClickFilm = { film ->
+                            viewModel.toggleFavorite(film)
+                        }
+                    )
                 }
 
                 is PopularFilmsScreenState.Loading -> {

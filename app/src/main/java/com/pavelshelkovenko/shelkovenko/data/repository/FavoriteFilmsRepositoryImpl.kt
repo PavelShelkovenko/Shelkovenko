@@ -2,17 +2,15 @@ package com.pavelshelkovenko.shelkovenko.data.repository
 
 import com.pavelshelkovenko.shelkovenko.data.FilmMapper
 import com.pavelshelkovenko.shelkovenko.data.local.FavoriteFilmDao
-import com.pavelshelkovenko.shelkovenko.data.local.models.FavoriteFilmEntity
 import com.pavelshelkovenko.shelkovenko.domain.FavoriteFilmsRepository
 import com.pavelshelkovenko.shelkovenko.domain.models.Film
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 
-class FavoriteFilmsRepositoryImpl (
+class FavoriteFilmsRepositoryImpl(
     private val favoriteFilmDao: FavoriteFilmDao,
     private val mapper: FilmMapper
-): FavoriteFilmsRepository {
+) : FavoriteFilmsRepository {
     override fun getFavoriteFilmsFlow(): Flow<List<Film>> {
         return favoriteFilmDao.getFavoriteFilmsFlow().map { listFavoriteFilmEntity ->
             listFavoriteFilmEntity.map {
@@ -35,5 +33,12 @@ class FavoriteFilmsRepositoryImpl (
     override suspend fun addFavoriteFilm(film: Film) {
         val favoriteFilmEntity = mapper.mapDomainToFavoriteFilmEntity(film = film)
         favoriteFilmDao.putFavoriteFilm(favoriteFilmEntity)
+    }
+
+    override suspend fun searchFavoriteFilms(query: String): List<Film> {
+        val favoriteFilms = favoriteFilmDao.searchFavoriteFilms(query)
+        return favoriteFilms?.map {
+            mapper.mapFavouriteFilmEntityToDomain(it)
+        } ?: emptyList()
     }
 }
