@@ -14,8 +14,8 @@ interface FavoriteFilmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun putFavoriteFilm(film: FavoriteFilmEntity)
 
-    @Delete
-    suspend fun deleteFavoriteFilm(film: FavoriteFilmEntity)
+    @Query("DELETE FROM favorite_films WHERE id = :filmId")
+    suspend fun deleteFavoriteFilm(filmId: Int)
 
     @Query("SELECT * FROM favorite_films")
     fun getFavoriteFilmsFlow(): Flow<List<FavoriteFilmEntity>>

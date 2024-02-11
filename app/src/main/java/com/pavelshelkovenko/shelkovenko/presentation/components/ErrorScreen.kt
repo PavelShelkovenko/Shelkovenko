@@ -1,4 +1,4 @@
-package com.pavelshelkovenko.shelkovenko.presentation.popular_films
+package com.pavelshelkovenko.shelkovenko.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,14 +19,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pavelshelkovenko.shelkovenko.R
-import com.pavelshelkovenko.shelkovenko.presentation.components.ButtonStatus
-import com.pavelshelkovenko.shelkovenko.presentation.components.FilmsAppButton
 import com.pavelshelkovenko.shelkovenko.presentation.theme.ShelkovenkoTheme
 
 @Composable
 fun ErrorScreen(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onRepeatClick: () -> Unit
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -46,13 +44,14 @@ fun ErrorScreen(
             Text(
                 text = stringResource(id = R.string.internet_error),
                 textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(30.dp))
             FilmsAppButton(
                 title = stringResource(id = R.string.repeat),
                 buttonStatus = ButtonStatus.Selected,
-                onClick = onClick
+                onClick = onRepeatClick
             )
         }
     }

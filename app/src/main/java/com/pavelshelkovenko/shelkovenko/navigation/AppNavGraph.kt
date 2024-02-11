@@ -1,20 +1,19 @@
 package com.pavelshelkovenko.shelkovenko.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.pavelshelkovenko.shelkovenko.presentation.search_films.SearchArea
 
 @Composable
 fun AppNavGraph(
     navHostController: NavHostController,
     popularFilmsScreenContent: @Composable () -> Unit,
     favoriteFilmsScreenContent: @Composable () -> Unit,
-    searchFilmsScreenContent: @Composable () -> Unit,
+    searchFilmsScreenContent: @Composable (Int) -> Unit,
     filmDetailsScreenContent: @Composable (Int) -> Unit
 ) {
     NavHost(
@@ -23,59 +22,11 @@ fun AppNavGraph(
     ) {
         composable(
             route = Screen.PopularFilmsScreen.route,
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(700)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(700)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(700)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(700)
-                )
-            }
         ) {
             popularFilmsScreenContent()
         }
         composable(
             route = Screen.FavoriteFilmsScreen.route,
-            enterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(700)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(700)
-                )
-            },
-            popEnterTransition = {
-                slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(700)
-                )
-            },
-            popExitTransition = {
-                slideOutOfContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(700)
-                )
-            }
         ) {
             favoriteFilmsScreenContent()
         }
@@ -89,6 +40,17 @@ fun AppNavGraph(
         ) {
             val id = it.arguments?.getInt(Screen.KEY_FILM_ID) ?: 0
             filmDetailsScreenContent(id)
+        }
+        composable(
+            route = Screen.SearchFilmsScreen.route,
+            arguments = listOf(
+                navArgument(Screen.KEY_AREA) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            val area = it.arguments?.getInt(Screen.KEY_AREA) ?: 0
+            searchFilmsScreenContent(area)
         }
     }
 }

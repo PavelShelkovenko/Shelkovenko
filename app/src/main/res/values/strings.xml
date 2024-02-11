@@ -2,7 +2,11 @@
     <string name="app_name">Shelkovenko</string>
     <string name="popular">Populars</string>
     <string name="favorite">Favorites</string>
+    <string name="search_for_favorite">Search for favorites</string>
+    <string name="search_for_populars">Search for Populars</string>
     <string name="not_found">Not found</string>
     <string name="repeat">Repeat</string>
+    <string name="genres">Genres</string>
+    <string name="countries">Countries</string>
     <string name="internet_error">There was an error loading data, please check your network connection</string>
 </resources>

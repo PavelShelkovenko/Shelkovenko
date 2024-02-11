@@ -1,23 +1,26 @@
 package com.pavelshelkovenko.shelkovenko.data
 
 import com.pavelshelkovenko.shelkovenko.data.local.models.FavoriteFilmEntity
+import com.pavelshelkovenko.shelkovenko.data.remote.models.CountryDto
 import com.pavelshelkovenko.shelkovenko.data.remote.models.FilmDetailsResponse
 import com.pavelshelkovenko.shelkovenko.data.remote.models.FilmDto
+import com.pavelshelkovenko.shelkovenko.data.remote.models.GenreDto
 import com.pavelshelkovenko.shelkovenko.domain.models.Film
 import com.pavelshelkovenko.shelkovenko.domain.models.FilmDetails
 
 class FilmMapper {
 
-//    fun mapDomainToDb(film: Film): FavoriteFilmEntity {
-//        return FavoriteFilmEntity(
-//            id = film.id,
-//            title = film.title,
-//            year = film.year,
-//            genre = film.genre.joinToString(),
-//            countries = film.countries.joinToString()
-//        )
-//    }
-//
+    fun mapDomainToFavoriteFilmEntity(film: Film): FavoriteFilmEntity {
+        return FavoriteFilmEntity(
+            id = film.id,
+            title = film.title,
+            year = film.year ?: 0,
+            genre = film.genre.joinToString(","),
+            countries = film.countries.joinToString(","),
+            posterUrl = film.posterUrl
+        )
+    }
+
     fun mapFavouriteFilmEntityToDomain(entity: FavoriteFilmEntity): Film {
         return Film(
             id = entity.id,
@@ -40,7 +43,11 @@ class FilmMapper {
             description = filmDetailsResponse.description.orEmpty()
         )
     }
-    fun mapDtoToDomain(film: FilmDto): Film {
+    fun mapListDtoToDomainList(films: List<FilmDto>): List<Film> {
+        return films.map(::mapDtoToDomain)
+    }
+
+    private fun mapDtoToDomain(film: FilmDto): Film {
         return Film(
             id = film.filmId,
             title = film.title.orEmpty(),

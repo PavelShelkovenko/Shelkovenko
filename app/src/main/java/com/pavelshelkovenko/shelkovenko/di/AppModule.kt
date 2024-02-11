@@ -4,10 +4,15 @@ import android.app.Application
 import androidx.room.Room
 import com.pavelshelkovenko.shelkovenko.data.FilmMapper
 import com.pavelshelkovenko.shelkovenko.data.local.AppDatabase
+import com.pavelshelkovenko.shelkovenko.data.local.CacheDao
+import com.pavelshelkovenko.shelkovenko.data.local.FavoriteFilmDao
 import com.pavelshelkovenko.shelkovenko.data.remote.ApiService
+import com.pavelshelkovenko.shelkovenko.data.repository.FavoriteFilmsRepositoryImpl
+import com.pavelshelkovenko.shelkovenko.domain.FavoriteFilmsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -46,6 +51,30 @@ object AppModule {
             .client(client)
             .build()
             .create()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCacheDao(db: AppDatabase): CacheDao {
+        return db.cacheDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoriteFilmDao(db: AppDatabase): FavoriteFilmDao {
+        return db.favoriteFilmDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoriteFilmsRepository(
+        mapper: FilmMapper,
+        favoriteFilmDao: FavoriteFilmDao
+    ): FavoriteFilmsRepository {
+        return FavoriteFilmsRepositoryImpl(
+            mapper = mapper,
+            favoriteFilmDao = favoriteFilmDao
+        )
     }
 
     @Provides

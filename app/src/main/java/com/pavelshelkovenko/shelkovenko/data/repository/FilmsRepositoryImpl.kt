@@ -15,7 +15,8 @@ import retrofit2.HttpException
 class FilmsRepositoryImpl(
     private val apiService: ApiService,
     private val cacheDao: CacheDao,
-    private val mapper: FilmMapper
+    private val mapper: FilmMapper,
+    private val gson: Gson
 ) : FilmsRepository {
     override suspend fun getPopularFilms(): Result<List<Film>> {
         return try {
@@ -24,7 +25,6 @@ class FilmsRepositoryImpl(
             getTopFilmsFromCache(cacheDao)
         } catch (ex: Exception) {
             getTopFilmsFromCache(cacheDao)
-
         }
     }
 
@@ -39,12 +39,31 @@ class FilmsRepositoryImpl(
     }
 
     override suspend fun searchFilmByKeyword(keyword: String): Result<List<Film>> {
-        TODO("Not yet implemented")
+        return try {
+            val response = apiService.searchFilm(keyword = keyword)
+            val resultList = response.films?.let {
+                mapper.mapListDtoToDomainList(it)
+            }
+            return resultList?.let {
+                Result.success(resultList)
+            } ?: Result.failure(IllegalStateException("Empty response"))
+        } catch (ex: HttpException) {
+            Result.failure(exception = ex)
+        } catch (ex: Exception) {
+            Result.failure(exception = ex)
+        }
     }
 
     private suspend fun getFilmDetailsFromNetwork(filmId: Int): Result<FilmDetails> {
         val response = apiService.getFilmDetails(id = filmId)
         val result = mapper.mapFilmDetailsDtoToDomain(response)
+        val requestPath = "${ApiService.BASE_URL}${ApiService.FILMS_PATH}/$filmId"
+        cacheDao.putCache(
+            CacheEntity(
+                apiRequest = requestPath,
+                response = gson.toJson(response)
+            )
+        )
         return Result.success(result)
     }
 
@@ -52,21 +71,27 @@ class FilmsRepositoryImpl(
         val requestPath = "${ApiService.BASE_URL}${ApiService.FILMS_PATH}/$filmId"
         val cachedResponse = cacheDao.getCache(requestPath)
             ?: return Result.failure(IllegalStateException("Empty cache"))
-        val response = Gson().fromJson(cachedResponse.response, FilmDetailsResponse::class.java)
-        val result = mapper.mapFilmDetailsDtoToDomain(response)
-        return Result.success(result)
+        val response = try {
+            gson.fromJson(cachedResponse.response, FilmDetailsResponse::class.java)
+        } catch (ex: Exception) {
+            null
+        }
+        response?.let {
+            val result = mapper.mapFilmDetailsDtoToDomain(it)
+            return Result.success(result)
+        } ?: return Result.failure(exception = IllegalStateException("Wrong json"))
     }
 
     private suspend fun getTopFilmsFromNetwork(): Result<List<Film>> {
         val response = apiService.getTopFilms()
-        val resultList = response.films?.map { filmDto ->
-            mapper.mapDtoToDomain(filmDto)
+        val resultList = response.films?.let {
+            mapper.mapListDtoToDomainList(it)
         }
         return resultList?.let {
             cacheDao.putCache(
                 CacheEntity(
                     apiRequest = ApiService.TOP_100_POPULAR_FILMS_REQUEST,
-                    response = Gson().toJson(response)
+                    response = gson.toJson(response)
                 )
             )
             Result.success(resultList)
@@ -76,9 +101,13 @@ class FilmsRepositoryImpl(
     private suspend fun getTopFilmsFromCache(cacheDao: CacheDao): Result<List<Film>> {
         val cachedResponse = cacheDao.getCache(ApiService.TOP_100_POPULAR_FILMS_REQUEST)
             ?: return Result.failure(IllegalStateException("Empty cache"))
-        val response = Gson().fromJson(cachedResponse.response, FilmsResponse::class.java)
-        val resultList = response.films?.map { filmDto ->
-            mapper.mapDtoToDomain(filmDto)
+        val response = try {
+            gson.fromJson(cachedResponse.response, FilmsResponse::class.java)
+        } catch (ex: Exception) {
+            null
+        }
+        val resultList = response?.films?.let {
+            mapper.mapListDtoToDomainList(it)
         }
         return resultList?.let {
             Result.success(resultList)

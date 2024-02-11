@@ -1,7 +1,9 @@
 package com.pavelshelkovenko.shelkovenko.presentation.components
 
+import androidx.compose.foundation.indication
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -16,16 +18,20 @@ import com.pavelshelkovenko.shelkovenko.presentation.theme.ShelkovenkoTheme
 fun FilmsAppButton(
     title: String,
     buttonStatus: ButtonStatus,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     Button(
         onClick = { onClick() },
-        modifier = Modifier.widthIn(160.dp),
+        modifier = modifier
+            .widthIn(160.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (buttonStatus == ButtonStatus.Unselected) {
                 MaterialTheme.colorScheme.secondary
             } else MaterialTheme.colorScheme.primary
-        )
+        ),
+        enabled = enabled
     ) {
         Text(
             text = title,

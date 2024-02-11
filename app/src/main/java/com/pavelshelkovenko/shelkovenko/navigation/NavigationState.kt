@@ -20,6 +20,14 @@ class NavigationState(
     fun navigateToFilmDetailsScreen(id: Int) {
         navHostController.navigate(Screen.FilmsDetailsScreen.getRouteWithArgs(id = id))
     }
+
+    fun navigateToSearchScreen(area: Int) {
+        navHostController.navigate(Screen.SearchFilmsScreen.getRouteWithArgs(area = area))
+    }
+
+    fun navigateBack() {
+        navHostController.navigateUp()
+    }
 }
 
 @Composable

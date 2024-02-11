@@ -11,7 +11,8 @@ import com.pavelshelkovenko.shelkovenko.presentation.model.FilmUi
 @Composable
 fun FilmsList(
     filmsList: List<FilmUi>,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
+    onFilmClick: (Int) -> Unit
 ) {
     LazyColumn(
         contentPadding = contentPadding,
@@ -21,7 +22,10 @@ fun FilmsList(
             filmsList,
             key = { film -> film.id }
         ) { film ->
-            FilmCard(filmUi = film)
+            FilmCard(
+                filmUi = film,
+                onFilmClick = { filmId -> onFilmClick(filmId) }
+            )
         }
     }
 }

@@ -18,7 +18,7 @@ private val DarkColorScheme = darkColorScheme(
     secondary = LightBlue,
     onSecondary = Blue,
     tertiary = White.copy(alpha = 0.6f),
-    background = Black,
+    background = Black.copy(alpha = 0.8f),
     onBackground = White
 )
 
@@ -29,7 +29,7 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = Blue,
     tertiary = Gray,
     background = White,
-    onBackground = Black
+    onBackground = Black,
 )
 
 @Composable

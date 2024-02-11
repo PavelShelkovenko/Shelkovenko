@@ -1,6 +1,7 @@
 package com.pavelshelkovenko.shelkovenko.di
 
 
+import com.google.gson.Gson
 import com.pavelshelkovenko.shelkovenko.data.FilmMapper
 import com.pavelshelkovenko.shelkovenko.data.local.AppDatabase
 import com.pavelshelkovenko.shelkovenko.data.local.CacheDao
@@ -21,17 +22,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object PopularFilmsModule {
 
-    @Provides
-    @ViewModelScoped
-    fun provideCacheDao(db: AppDatabase): CacheDao {
-        return db.cacheDao()
-    }
 
-    @Provides
-    @ViewModelScoped
-    fun provideFavoriteFilmDao(db: AppDatabase): FavoriteFilmDao {
-        return db.favoriteFilmDao()
-    }
 
     @Provides
     @ViewModelScoped
@@ -47,18 +38,6 @@ object PopularFilmsModule {
 
     @Provides
     @ViewModelScoped
-    fun provideFavoriteFilmsRepository(
-        mapper: FilmMapper,
-        favoriteFilmDao: FavoriteFilmDao
-    ): FavoriteFilmsRepository {
-        return FavoriteFilmsRepositoryImpl(
-            mapper = mapper,
-            favoriteFilmDao = favoriteFilmDao
-        )
-    }
-
-    @Provides
-    @ViewModelScoped
     fun provideFilmsRepository(
         cacheDao: CacheDao,
         mapper: FilmMapper,
@@ -67,7 +46,8 @@ object PopularFilmsModule {
         return FilmsRepositoryImpl(
             apiService = apiService,
             cacheDao = cacheDao,
-            mapper = mapper
+            mapper = mapper,
+            gson = Gson()
         )
     }
 

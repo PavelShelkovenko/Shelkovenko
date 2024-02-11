@@ -1,4 +1,4 @@
-package com.pavelshelkovenko.shelkovenko.presentation.popular_films
+package com.pavelshelkovenko.shelkovenko.presentation.favorite_films
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,33 +21,35 @@ import com.pavelshelkovenko.shelkovenko.presentation.components.ErrorScreen
 import com.pavelshelkovenko.shelkovenko.presentation.components.FilmsList
 import com.pavelshelkovenko.shelkovenko.presentation.components.ShimmersFilmsList
 import com.pavelshelkovenko.shelkovenko.presentation.components.TopBar
+import com.pavelshelkovenko.shelkovenko.presentation.popular_films.PopularFilmsScreenState
 import com.pavelshelkovenko.shelkovenko.presentation.search_films.SearchArea
 
 @Composable
-fun PopularFilmsScreen(
+fun FavoriteFilmsScreen(
+    onNavigateToPopularFilms: () -> Unit,
+    onNavigateToSearchFilms: (SearchArea) -> Unit,
     onNavigateToFilmDetails: (Int) -> Unit,
-    onNavigateToFavoriteFilms: () -> Unit,
-    onNavigateToSearchFilms: (SearchArea) -> Unit
 ) {
-
-    val viewModel = hiltViewModel<PopularFilmsViewModel>()
+    val viewModel = hiltViewModel<FavoriteFilmsViewModel>()
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    PopularFilmContent(
+    FavoriteFilmsContent(
         viewModel = viewModel,
         state = state,
-        onNavigateToFilmDetails = onNavigateToFilmDetails,
-        onNavigateToFavoriteFilms = onNavigateToFavoriteFilms,
-        onNavigateToSearchFilms = onNavigateToSearchFilms
+        onNavigateToFilmDetails = { filmId ->
+            onNavigateToFilmDetails(filmId)
+        },
+        onNavigateToPopularFilms = { onNavigateToPopularFilms() },
+        onNavigateToSearchFilms = { onNavigateToSearchFilms(it) }
     )
 }
 
 @Composable
-fun PopularFilmContent(
-    viewModel: PopularFilmsViewModel,
-    state: State<PopularFilmsScreenState>,
+fun FavoriteFilmsContent(
+    viewModel: FavoriteFilmsViewModel,
+    state: State<FavoriteFilmsScreenState>,
     onNavigateToFilmDetails: (Int) -> Unit,
-    onNavigateToFavoriteFilms: () -> Unit,
+    onNavigateToPopularFilms: () -> Unit,
     onNavigateToSearchFilms: (SearchArea) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -59,22 +61,22 @@ fun PopularFilmContent(
         Column {
 
             TopBar(
-                title = stringResource(id = R.string.popular)
+                title = stringResource(id = R.string.favorite)
             ) {
-                onNavigateToSearchFilms(SearchArea.Populars)
+                onNavigateToSearchFilms(SearchArea.Favorites)
             }
 
             when (val localState = state.value) {
-                is PopularFilmsScreenState.Content -> {
+                is FavoriteFilmsScreenState.Content -> {
                     FilmsList(
-                        filmsList = localState.films,
+                        filmsList = localState.favoriteFilms,
                         contentPadding = PaddingValues(top = 10.dp, bottom = 70.dp)
                     ) { filmId ->
                         onNavigateToFilmDetails(filmId)
                     }
                 }
 
-                is PopularFilmsScreenState.Loading -> {
+                is FavoriteFilmsScreenState.Loading -> {
                     ShimmersFilmsList(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -82,12 +84,11 @@ fun PopularFilmContent(
                     )
                 }
 
-                is PopularFilmsScreenState.Error -> {
+                is FavoriteFilmsScreenState.Error -> {
                     ErrorScreen {
-                        viewModel.downloadFilms()
+                        //viewModel.downloadFilms()
                     }
                 }
-
             }
         }
         ComboButton(
@@ -96,10 +97,10 @@ fun PopularFilmContent(
                 .padding(bottom = 8.dp),
             firstButtonTitle = stringResource(id = R.string.popular),
             secondButtonTitle = stringResource(id = R.string.favorite),
-            firstButtonStatus = ButtonStatus.Selected,
-            secondButtonStatus = ButtonStatus.Unselected,
-            firstButtonClick = { },
-            secondButtonClick = { onNavigateToFavoriteFilms() }
+            firstButtonStatus = ButtonStatus.Unselected,
+            secondButtonStatus = ButtonStatus.Selected,
+            firstButtonClick = { onNavigateToPopularFilms() },
+            secondButtonClick = { }
         )
     }
 }

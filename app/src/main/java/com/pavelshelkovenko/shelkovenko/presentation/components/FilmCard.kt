@@ -36,9 +36,10 @@ import com.pavelshelkovenko.shelkovenko.presentation.theme.ShelkovenkoTheme
 fun FilmCard(
     filmUi: FilmUi,
     modifier: Modifier = Modifier,
+    onFilmClick: (Int) -> Unit
 ) {
     Card(
-        onClick = {},
+        onClick = { onFilmClick(filmUi.id) },
         modifier = modifier
             .fillMaxWidth()
             .height(92.dp)
@@ -116,7 +117,7 @@ fun FilmCardPreview() {
                 posterUrl = "https://duckduckgo.com/?q=dictas",
                 genre = "nascetur",
                 isFavorite = false
-            ),
-        )
+            )
+        ) {  }
     }
 }

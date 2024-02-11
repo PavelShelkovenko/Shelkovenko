@@ -13,15 +13,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PopularFilmsViewModel @Inject constructor(
-    getPopularFilmsUseCase: GetPopularFilmsUseCase,
+    private val getPopularFilmsUseCase: GetPopularFilmsUseCase,
 ): ViewModel() {
 
     var state: MutableStateFlow<PopularFilmsScreenState> = MutableStateFlow((PopularFilmsScreenState.Loading))
         private set
 
     init {
+        downloadFilms()
+    }
+    fun downloadFilms() {
         viewModelScope.launch {
-            //delay(5000)
+            state.update { PopularFilmsScreenState.Loading }
             getPopularFilmsUseCase().onSuccess { films ->
                 state.update {
                     PopularFilmsScreenState.Content(
