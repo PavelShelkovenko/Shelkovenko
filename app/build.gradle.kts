@@ -80,7 +80,7 @@ dependencies {
 
     // Test
     androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.bundles.testing)
-    testImplementation(libs.junit)
+    androidTestImplementation(libs.bundles.testing.ui)
+    testImplementation(libs.bundles.testing)
     debugImplementation(libs.bundles.debug)
 }

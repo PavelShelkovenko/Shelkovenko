@@ -17,6 +17,9 @@ okHttp-logging = "4.11.0"
 dagger = "2.48"
 dagger-compose = "1.0.0"
 hilt-compiler = "1.0.0"
+mockk = "1.13.9"
+coroutines-test = "1.8.0-RC2"
+truth = "1.4.0"
 
 [libraries]
 # Core
@@ -40,7 +43,10 @@ androidx-navigation-runtime-ktx = { module = "androidx.navigation:navigation-com
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-core" }
 androidx-compose-ui-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
-junit = { module = "junit:junit", version.ref = "junit" }
+junit-test = { module = "junit:junit", version.ref = "junit" }
+mockk-test = { module = "io.mockk:mockk", version.ref = "mockk" }
+coroutines-testing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test" }
+truth-test = { module = "com.google.truth:truth", version.ref = "truth" }
 
 # Coil
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
@@ -72,9 +78,10 @@ dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 
 [bundles]
 compose = ["androidx-activity-compose", "androidx-lifecycle-compose", "androidx-lifecycle-viewmodel-compose", "compose-ui", "compose-ui-graphics", "compose-ui-preview", "compose-material3", "androidx-navigation-runtime-ktx"]
-testing = ["androidx-espresso-core", "androidx-junit", "androidx-compose-ui-junit4"]
+testing-ui = ["androidx-espresso-core", "androidx-junit", "androidx-compose-ui-junit4"]
 debug = ["compose-ui-tooling", "androidx-compose-ui-test-manifest"]
 coil = ["coil-compose", "coil-svg"]
 room = ["room-runtime", "room-ktx"]
 retrofit = ["retrofit-core", "retrofit-gson-converter", "okHttp-core", "okHttp-logging-interceptor"]
 dagger = ["dagger-core", "dagger-compose"]
+testing = ["mockk-test", "coroutines-testing", "truth-test", "junit-test"]
